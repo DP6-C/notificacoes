@@ -10,7 +10,7 @@
     const INTERVALO = 30000;
     const INTERVALO_RESPOSTA = 120000;
     const INTERVALO_ABERTOS = 1080000;
-    const INTERVALO_FILA = 120000;
+    const INTERVALO_FILA = 60000;
     const URL_DIGISAC = `${window.location.origin}/`;
 
     let ultimaResposta = 0;
