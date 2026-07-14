@@ -6,9 +6,7 @@
 // @match        https://contarconsultoria.digisac.io/*
 // @grant        GM_notification
 // @grant        GM_openInTab
-// @require      https://raw.githubusercontent.com/DP6-C/DPCONTAR/5793218d0ebf8ef6655b80227fda263ae2044b01/notificacoes_digisac/Usuario/DigisacMonitorChatsFila.js
-// @updateURL    https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/tags/monitor-usuario-v1.0.1/notificacoes_digisac/Usuario/script.js
-// @downloadURL  https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/tags/monitor-usuario-v1.0.1/notificacoes_digisac/Usuario/script.js
+// @require      https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/heads/main/notificacoes_digisac/Usuario/DigisacMonitorChatsFila.js
 // @run-at       document-start
 // ==/UserScript==
 

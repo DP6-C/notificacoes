@@ -267,5 +267,15 @@
   }
 
   setTimeout(verificar, 500);
-  setInterval(verificar, INTERVALO);
+
+  // Fase 2: MutationObserver reage a mudancas no DOM em vez de polling fixo
+  let _timerObserver = null;
+  const _agendar = (delay) => {
+    if (_timerObserver) clearTimeout(_timerObserver);
+    _timerObserver = setTimeout(verificar, delay || 1000);
+  };
+  const _observer = new MutationObserver(() => _agendar(1000));
+  _observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  // fallback de poll longo caso o observer perca alguma mudanca
+  setInterval(verificar, 5 * 60 * 1000);
 })();
