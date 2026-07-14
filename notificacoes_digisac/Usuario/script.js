@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Contar Consultoria Digisac Monitor Chats + Fila v3.0
+// @name         Monitoria Digisac
 // @namespace    contar.digisac.monitor
-// @version      3.0.0
+// @version      1.0.1
 // @description  Alerta para chats e fila - Versão usuário
 // @match        https://contarconsultoria.digisac.io/*
 // @grant        GM_notification
