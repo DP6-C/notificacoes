@@ -13,9 +13,26 @@
   const INTERVALO_FILA = 60000;
   const URL_DIGISAC = `${window.location.origin}/`;
 
-  let ultimaResposta = 0;
-  let ultimoAberto = 0;
-  let ultimaFila = 0;
+  const CHAVE_RESP = "digisac_ultimaResposta";
+  const CHAVE_ABERTO = "digisac_ultimoAberto";
+  const CHAVE_FILA = "digisac_ultimaFila";
+  function lerTempo(chave) { return parseInt(GM_getValue(chave, "0"), 10) || 0; }
+  function gravarTempo(chave, val) { GM_setValue(chave, String(val)); }
+
+  // Fase 3: lock de lider entre abas (evita notificacao duplicada na mesma maquina)
+  const TAB_ID = Math.random().toString(36).slice(2);
+  const LOCK_KEY = "digisac_lock";
+  const LOCK_TTL = 10000;
+  function adquirirLock() {
+    const agora = Date.now();
+    let lock = null;
+    try { lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null"); } catch (e) { lock = null; }
+    if (!lock || lock.expira < agora) {
+      localStorage.setItem(LOCK_KEY, JSON.stringify({ id: TAB_ID, expira: agora + LOCK_TTL }));
+      return true;
+    }
+    return lock.id === TAB_ID;
+  }
 
   if ("Notification" in window && Notification.permission !== "granted") {
     Notification.requestPermission();
@@ -241,25 +258,26 @@
     );
 
     const agora = Date.now();
+    const souLider = adquirirLock();
 
-    if (chatsAguardando > 0 && agora - ultimaResposta >= INTERVALO_RESPOSTA) {
-      notificar(`• ${chatsAguardando} atendimento(s) aguardando sua resposta`, URL_DIGISAC);
-      ultimaResposta = agora;
+    if (chatsAguardando > 0 && agora - lerTempo(CHAVE_RESP) >= INTERVALO_RESPOSTA) {
+      if (souLider) notificar(`• ${chatsAguardando} atendimento(s) aguardando sua resposta`, URL_DIGISAC);
+      gravarTempo(CHAVE_RESP, agora);
     }
 
-    if (chatsComigo > 0 && agora - ultimoAberto >= INTERVALO_ABERTOS) {
-      notificar(`• ${chatsComigo} ATENÇÃO! Atendimento se encerrando em 2 minutos!`, URL_DIGISAC);
-      ultimoAberto = agora;
+    if (chatsComigo > 0 && agora - lerTempo(CHAVE_ABERTO) >= INTERVALO_ABERTOS) {
+      if (souLider) notificar(`• ${chatsComigo} ATENÇÃO! Atendimento se encerrando em 2 minutos!`, URL_DIGISAC);
+      gravarTempo(CHAVE_ABERTO, agora);
     }
 
-    if (totalFilaNotificavel > 0 && agora - ultimaFila >= INTERVALO_FILA) {
+    if (totalFilaNotificavel > 0 && agora - lerTempo(CHAVE_FILA) >= INTERVALO_FILA) {
       const contatosParaMensagem = operadorTemFiltro ? contatosFila : fila.contatos;
       const nomes = resumoContatos(contatosParaMensagem, totalFilaNotificavel);
       const detalhe = nomes ? `: ${nomes}` : "";
       const url = contatosParaMensagem[0] ? contatosParaMensagem[0].url : URL_DIGISAC;
 
-      notificar(`• ${totalFilaNotificavel} chamado(s) na fila${detalhe}`, url);
-      ultimaFila = agora;
+      if (souLider) notificar(`• ${totalFilaNotificavel} chamado(s) na fila${detalhe}`, url);
+      gravarTempo(CHAVE_FILA, agora);
     }
     } catch (e) {
       console.warn("[Digisac " + CONFIG.tipo + "] erro em verificar():", e);
