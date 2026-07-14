@@ -6,7 +6,7 @@
 // @match        https://contarconsultoria.digisac.io/*
 // @grant        GM_notification
 // @grant        GM_openInTab
-// @require      https://raw.githubusercontent.com/Contar-Consultoria/TamperMonkeyScripts/refs/heads/master/Digisac/Tv/DigisacMonitorChatsFila.js
+// @require      // @require https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/heads/main/notificacoes_digisac/Tv/DigisacMonitorChatsFila.js
 // @run-at       document-start
 // ==/UserScript==
 
