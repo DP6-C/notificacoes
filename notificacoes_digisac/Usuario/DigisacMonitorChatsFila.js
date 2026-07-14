@@ -188,6 +188,7 @@
         title: "DIGISAC",
         text: mensagem,
         timeout: 10000,
+        highlight: true,
         onclick: () => abrirDigisac(destino)
       });
       return;
