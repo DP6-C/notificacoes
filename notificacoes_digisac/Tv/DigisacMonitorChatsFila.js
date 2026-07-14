@@ -227,6 +227,7 @@
     }
 
     function verificar() {
+        try {
         const chatsComigo = quantidadeChatsComigo();
         const chatsAguardando = quantidadeChatsAguardando();
         const fila = dadosFila();
@@ -258,6 +259,9 @@
             notificar(`• ${totalFilaNotificavel} chamado(s) na fila${detalhe}`, url);
             ultimaFila = agora;
         }
+      } catch (e) {
+        console.warn("[Digisac " + CONFIG.tipo + "] erro em verificar():", e);
+      }
     }
 
     setTimeout(verificar, 500);
