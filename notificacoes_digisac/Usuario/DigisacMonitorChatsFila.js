@@ -205,7 +205,6 @@
         title: "DIGISAC",
         text: mensagem,
         timeout: 10000,
-        highlight: true,
         onclick: () => abrirDigisac(destino)
       });
       return;
@@ -294,6 +293,6 @@
   };
   const _observer = new MutationObserver(() => _agendar(1000));
   _observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-  // fallback de poll longo caso o observer perca alguma mudanca
-  setInterval(verificar, 5 * 60 * 1000);
+  // fallback <= 3 min (teto de latencia da fila caso o observer perca a mudanca)
+  setInterval(verificar, 3 * 60 * 1000);
 })();
