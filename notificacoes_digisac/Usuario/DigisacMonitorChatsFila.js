@@ -10,7 +10,7 @@
   const INTERVALO = 30000;
   const INTERVALO_RESPOSTA = 120000;
   const INTERVALO_ABERTOS = 1080000;
-  const INTERVALO_FILA = 60000;
+  const INTERVALO_FILA = 4 * 60 * 1000;
   const URL_DIGISAC = `${window.location.origin}/`;
 
   const CHAVE_RESP = "digisac_ultimaResposta";
@@ -65,21 +65,22 @@
   }
 
   function quantidadeFila() {
-    const numeroPorBadge = numeroBadge(
+    const porTestid = numeroBadge(
       '[data-testid="chat-tab-queue_calls"], [data-testid*="queue-calls"], [data-testid*="queue_calls"], [data-testid*="queue"]'
     );
+    if (porTestid > 0) return porTestid;
 
-    if (numeroPorBadge > 0) return numeroPorBadge;
-
-    const abas = Array.from(document.querySelectorAll("button, a, [role='tab'], [data-testid*='chat-tab']"));
-    const abaFila = abas.find((aba) => /\bfila\b/i.test(textoLimpo(aba.textContent)));
-    if (!abaFila) return 0;
-
-    const numeros = textoLimpo(abaFila.textContent).match(/\d+/g);
-    if (!numeros || !numeros.length) return 0;
-
-    const numero = parseInt(numeros[numeros.length - 1], 10);
-    return isNaN(numero) ? 0 : numero;
+    const badges = Array.from(
+      document.querySelectorAll(".badge, [class*='badge'], [class*='pill'], [class*='count'], [class*='counter']")
+    );
+    for (const badge of badges) {
+      const title = (badge.getAttribute("title") || "").toLowerCase();
+      if (/fila/.test(title) || /chamados?\s+na\s+fila/.test(title)) {
+        const n = parseInt(textoLimpo(badge.textContent), 10);
+        if (!isNaN(n) && n > 0) return n;
+      }
+    }
+    return 0;
   }
 
   function quantidadeChatsComigo() {
@@ -293,6 +294,6 @@
   };
   const _observer = new MutationObserver(() => _agendar(1000));
   _observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-  // fallback <= 3 min (teto de latencia da fila caso o observer perca a mudanca)
-  setInterval(verificar, 3 * 60 * 1000);
+  // fallback <= 1 min (re-checa a fila com mais frequencia caso o observer perca a mudanca)
+  setInterval(verificar, 60 * 1000);
 })();
