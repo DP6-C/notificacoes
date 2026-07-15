@@ -8,7 +8,9 @@
 // @grant        GM_openInTab
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @require      https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/heads/main/notificacoes_digisac/Tv/DigisacMonitorChatsFila.js
+// @require      https://raw.githubusercontent.com/DP6-C/DPCONTAR/47975759d4bac3f8b8cfbefab0e1af2d2ad05d0d/notificacoes_digisac/Tv/DigisacMonitorChatsFila.js
+// @updateURL    https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/tags/monitor-tv-v1.0.1/notificacoes_digisac/Tv/script.js
+// @downloadURL  https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/tags/monitor-tv-v1.0.1/notificacoes_digisac/Tv/script.js
 // @run-at       document-start
 // ==/UserScript==
 
