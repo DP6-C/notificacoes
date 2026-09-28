@@ -9,6 +9,8 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @require      https://raw.githubusercontent.com/DP6-C/notificacoes/refs/heads/main/notificacoes_digisac/Usuario/DigisacMonitorChatsFila.js?token=GHSAT0AAAAAAEJOEJWIPKGH5GLW7L2NOUKK2V2WPJA
+// @updateURL    https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/tags/monitor-usuario-v1.0.1/notificacoes_digisac/Usuario/script.js
+// @downloadURL  https://raw.githubusercontent.com/DP6-C/DPCONTAR/refs/tags/monitor-usuario-v1.0.1/notificacoes_digisac/Usuario/script.js
 // @run-at       document-start
 // ==/UserScript==
 
