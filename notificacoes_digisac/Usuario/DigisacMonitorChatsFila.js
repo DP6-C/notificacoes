@@ -73,6 +73,7 @@
     if (!aba) return 0;
 
     const badge =
+      aba.querySelector("span.text-sidebar-label") ||
       aba.querySelector(".badge.badge-primary.badge-pill") ||
       aba.querySelector(".badge.badge-primary") ||
       aba.querySelector("[class*='badge']") ||
@@ -125,6 +126,8 @@
 
   function contatoDaLinha(linha) {
     const nomeElemento =
+      linha.querySelector("h5") ||
+      linha.querySelector("[data-testid^='contact_internalName-']") ||
       linha.querySelector(".chat-contact-name") ||
       linha.querySelector(".contact-name") ||
       linha.querySelector("[class*='contact'][class*='name' i]") ||
@@ -151,13 +154,12 @@
 
   function contatosVisiveis() {
     const seletores = [
+      "[data-testid='contact_item-button-select']",
       ".chatContactDiv",
       "[data-testid*='chat-contact']",
       "[class*='chatContact']",
       "[class*='contact-item']",
-      "[class*='conversation']",
-      "main button",
-      "[role='main'] button"
+      "[class*='conversation']"
     ];
 
     const linhas = new Set();
@@ -267,17 +269,19 @@
     if (!totalChats) return 0;
 
     const contatos = document.querySelectorAll(
-      ".chatContactDiv, [data-testid*='chat-contact'], main button, [role='main'] button"
+      "[data-testid='contact_item-button-select'], .chatContactDiv, [data-testid*='chat-contact']"
     );
     if (!contatos.length) return totalChats;
 
     let aguardandoResposta = 0;
     contatos.forEach((contato) => {
-      const wrapper = contato.querySelector(".last-message-wrapper");
-      if (!wrapper) return;
+      const ultimaMensagem = contato.querySelector("[data-testid='last-message-text']");
+      if (!ultimaMensagem) return;
 
-      const checkOperador = wrapper.querySelector("svg");
-      if (!checkOperador) {
+      const mensagemEnviadaPeloOperador = contato.querySelector(
+        "button svg.lucide-check-check"
+      );
+      if (!mensagemEnviadaPeloOperador) {
         aguardandoResposta++;
       }
     });
