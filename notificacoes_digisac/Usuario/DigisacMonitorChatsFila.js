@@ -46,6 +46,28 @@
     return textoLimpo(texto).toLowerCase();
   }
 
+  function numeroNoTexto(texto) {
+    const numero = parseInt(textoLimpo(texto).match(/\d+/)?.[0] || "", 10);
+    return isNaN(numero) ? 0 : numero;
+  }
+
+  function botaoPorTexto(regex) {
+    return Array.from(document.querySelectorAll("button")).find((botao) => {
+      return regex.test(textoLimpo(botao.textContent));
+    });
+  }
+
+  function elementoEstaAtivo(elemento) {
+    if (!elemento) return false;
+
+    const atributos = ["aria-selected", "aria-pressed", "data-state", "data-active"];
+    if (atributos.some((nome) => /^(true|active|selected)$/i.test(elemento.getAttribute(nome) || ""))) {
+      return true;
+    }
+
+    return /\b(active|selected|current)\b/i.test(elemento.className || "");
+  }
+
   function numeroBadge(seletorAba) {
     const aba = document.querySelector(seletorAba);
     if (!aba) return 0;
@@ -58,10 +80,10 @@
       aba.querySelector("[class*='count']") ||
       aba.querySelector("[class*='counter']");
 
-    if (!badge) return 0;
+    if (!badge) return numeroNoTexto(aba.textContent);
 
     const numero = parseInt(textoLimpo(badge.textContent), 10);
-    return isNaN(numero) ? 0 : numero;
+    return isNaN(numero) ? numeroNoTexto(aba.textContent) : numero;
   }
 
   function quantidadeFila() {
@@ -69,6 +91,10 @@
       '[data-testid="chat-tab-queue_calls"], [data-testid*="queue-calls"], [data-testid*="queue_calls"], [data-testid*="queue"]'
     );
     if (porTestid > 0) return porTestid;
+
+    const botaoFila = botaoPorTexto(/^fila\b/i);
+    const porBotao = numeroNoTexto(botaoFila?.textContent);
+    if (porBotao > 0) return porBotao;
 
     const badges = Array.from(
       document.querySelectorAll(".badge, [class*='badge'], [class*='pill'], [class*='count'], [class*='counter']")
@@ -84,7 +110,17 @@
   }
 
   function quantidadeChatsComigo() {
-    return numeroBadge('[data-testid="chat-tab-mine"]');
+    const porTestid = numeroBadge('[data-testid="chat-tab-mine"]');
+    if (porTestid > 0) return porTestid;
+
+    const botaoMinhas = botaoPorTexto(/^minhas\b/i);
+    const porBotao = numeroNoTexto(botaoMinhas?.textContent);
+    if (porBotao > 0) return porBotao;
+
+    // No layout novo, "Minhas" pode não exibir contador. Só conta a lista
+    // quando a própria aba informa que está selecionada.
+    if (elementoEstaAtivo(botaoMinhas)) return contatosVisiveis().length;
+    return 0;
   }
 
   function contatoDaLinha(linha) {
@@ -102,6 +138,8 @@
       linha.getAttribute("data-contact-id") ||
       linha.dataset.id ||
       linha.dataset.contactId ||
+      linha.getAttribute("data-chat-id") ||
+      linha.getAttribute("href")?.split("/").pop() ||
       "";
 
     return {
@@ -117,7 +155,9 @@
       "[data-testid*='chat-contact']",
       "[class*='chatContact']",
       "[class*='contact-item']",
-      "[class*='conversation']"
+      "[class*='conversation']",
+      "main button",
+      "[role='main'] button"
     ];
 
     const linhas = new Set();
@@ -226,7 +266,9 @@
     const totalChats = quantidadeChatsComigo();
     if (!totalChats) return 0;
 
-    const contatos = document.querySelectorAll(".chatContactDiv");
+    const contatos = document.querySelectorAll(
+      ".chatContactDiv, [data-testid*='chat-contact'], main button, [role='main'] button"
+    );
     if (!contatos.length) return totalChats;
 
     let aguardandoResposta = 0;
